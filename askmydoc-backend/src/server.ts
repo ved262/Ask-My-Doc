@@ -5,8 +5,8 @@ import cors from 'cors'
 
 dotenv.config()
 
-import documentRoutes from './routes/documents'
-import chatRoutes from './routes/chat'
+import documentRoutes from './routes/documents.route'
+import chatRoutes from './routes/chat.route'
 
 const app = express()
 const PORT = process.env.PORT || 3000
