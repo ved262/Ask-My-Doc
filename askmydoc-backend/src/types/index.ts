@@ -8,9 +8,28 @@ export interface IDocument extends MongooseDocument {
     pageCount: number;
     createdAt: Date;
     updatedAt: Date;
+    chatHistory: IChatMessage[];
 }
 
 export interface ApiError {
   error: string;
   details?: string;
+}
+
+export type MessageRole = 'user'|'assistant';
+
+export interface IChatMessage{
+  role: MessageRole;
+  content: string;
+  timestamp: Date;
+}
+
+export interface IAskQuestionRequest {
+  question: string;
+}
+
+export interface IAskQuestionResponse {
+  answer: string;
+  question: string;
+  documentId: string;
 }

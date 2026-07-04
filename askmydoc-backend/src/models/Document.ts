@@ -1,5 +1,21 @@
 import mongoose, { Schema } from 'mongoose'
-import { IDocument } from '../types'
+import { IDocument, IChatMessage } from '../types'
+
+const ChatMessageSchema = new Schema<IChatMessage>({
+    role: {
+        type: String,
+        enum: ['user', 'assistant'],
+        required: true
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    timestamp: {
+        type: Date,
+        default: Date.now
+    }
+}, { _id: false })
 
 const DocumentSchema = new Schema<IDocument>(
     {
@@ -22,6 +38,10 @@ const DocumentSchema = new Schema<IDocument>(
         pageCount: {
             type: Number,
             default: 0
+        },
+        chatHistory: {
+            type: [ChatMessageSchema],
+            default: []
         }
     },
     { timestamps: true }
