@@ -1,0 +1,389 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.chat-container {
+  height: 100vh;
+  background: #0a0a0a;
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+
+.sidebar {
+  width: 260px;
+  background: #111111;
+  border-right: 1px solid #1e1e1e;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 14px 12px;
+  border-bottom: 1px solid #1e1e1e;
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  button {
+    color: #ffffff;
+
+    &:hover {
+      color: #ce93d8;
+    }
+  }
+}
+
+mat-nav-list {
+  padding: 8px !important;
+}
+
+mat-list-item {
+  border-radius: 10px !important;
+  margin-bottom: 2px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &.active {
+    background: #1a0d24 !important;
+
+    ::ng-deep [matListItemIcon] {
+      color: #ab47bc !important;
+    }
+
+    ::ng-deep [matListItemTitle] {
+      color: #ce93d8 !important;
+    }
+
+    ::ng-deep [matListItemLine] {
+      color: #9e9e9e !important;
+    }
+  }
+
+  &:hover:not(.active) {
+    background: #1a1a1a !important;
+
+    ::ng-deep [matListItemTitle] {
+      color: #ffffff !important;
+    }
+  }
+}
+
+::ng-deep [matListItemIcon] {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+::ng-deep [matListItemTitle] {
+  color: #e0e0e0 !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+::ng-deep [matListItemLine] {
+  color: #9e9e9e !important;
+  font-size: 11px !important;
+}
+
+.empty-state {
+  text-align: center;
+  color: #616161;
+  font-size: 13px;
+  padding: 2rem 1rem;
+}
+
+// ── Chat area ─────────────────────────────────────────────────────────────────
+
+.chat-area {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #0a0a0a;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #1e1e1e;
+  background: #111111;
+  min-height: 56px;
+
+  mat-icon {
+    color: #ab47bc;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .header-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-meta {
+    font-size: 12px;
+    color: #9e9e9e;
+    flex-shrink: 0;
+  }
+}
+
+// ── Messages ──────────────────────────────────────────────────────────────────
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 4px;
+  }
+}
+
+.message {
+  display: flex;
+  animation: fadeIn 0.2s ease;
+
+  &.user {
+    justify-content: flex-end;
+  }
+
+  &.assistant {
+    justify-content: flex-start;
+  }
+
+  .bubble {
+    max-width: 72%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &.user .bubble {
+    background: #6a1b9a;
+    color: #f3e5f5;
+    border-bottom-right-radius: 4px;
+  }
+
+  &.assistant .bubble {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border: 1px solid #2a2a2a;
+    border-bottom-left-radius: 4px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Typing indicator ──────────────────────────────────────────────────────────
+
+.typing {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 12px 16px !important;
+  min-width: 60px;
+
+  span {
+    width: 7px;
+    height: 7px;
+    background: #ab47bc;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  30% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
+
+// ── Starter prompts ───────────────────────────────────────────────────────────
+
+.starters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: auto;
+  padding: 2rem 1.5rem;
+  text-align: center;
+
+  .starters-heading {
+    font-size: 13px;
+    color: #9e9e9e;
+    margin: 0;
+  }
+
+  .starter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .starter-btn {
+    padding: 10px 14px;
+    background: #111111;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    color: #e0e0e0;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: left;
+    line-height: 1.4;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+
+    &:hover {
+      border-color: #6a1b9a;
+      color: #ce93d8;
+      background: #120a1a;
+    }
+  }
+}
+
+// ── Input area ────────────────────────────────────────────────────────────────
+
+.input-area {
+  padding: 14px 20px;
+  border-top: 1px solid #1e1e1e;
+  background: #111111;
+}
+
+.input-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.input-field {
+  flex: 1;
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background: #1a1a1a !important;
+    border-radius: 12px !important;
+  }
+
+  ::ng-deep input.mat-mdc-input-element {
+    color: #ffffff !important;
+    font-size: 14px !important;
+  }
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  ::ng-deep .mdc-notched-outline__leading,
+  ::ng-deep .mdc-notched-outline__notch,
+  ::ng-deep .mdc-notched-outline__trailing {
+    border-color: #2a2a2a !important;
+  }
+
+  ::ng-deep .mdc-text-field--focused {
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #ab47bc !important;
+    }
+  }
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #6a1b9a;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  mat-icon {
+    color: #ffffff;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #7b1fa2;
+  }
+
+  &:disabled {
+    background: #1e1e1e;
+    cursor: default;
+
+    mat-icon {
+      color: #424242;
+    }
+  }
+}

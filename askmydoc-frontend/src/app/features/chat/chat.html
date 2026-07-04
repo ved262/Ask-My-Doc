@@ -1,1 +1,85 @@
-<p>chat works!</p>
+<mat-sidenav-container class="chat-container">
+
+  <!-- ── Sidebar ── -->
+  <mat-sidenav mode="side" opened class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Documents</span>
+      <button mat-icon-button (click)="navigateToUpload()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <mat-nav-list>
+      @for (doc of documents(); track doc._id) {
+      <mat-list-item [class.active]="doc._id === activeDocument()?._id" (click)="selectDocument(doc)">
+        <mat-icon matListItemIcon>picture_as_pdf</mat-icon>
+        <span matListItemTitle>{{ doc.originalName }}</span>
+        <span matListItemLine>{{ formatFileSize(doc.fileSize) }} · {{ doc.pageCount }} pages</span>
+      </mat-list-item>
+      } @empty {
+      <p class="empty-state">No documents yet</p>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- ── Chat Area ── -->
+  <mat-sidenav-content class="chat-area">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <mat-icon>auto_stories</mat-icon>
+      <span class="header-name">{{ activeDocument()?.originalName ?? 'Select a document' }}</span>
+      @if (activeDocument()) {
+      <span class="header-meta">{{ activeDocument()!.pageCount }} pages</span>
+      }
+    </div>
+
+    <!-- Messages -->
+    <div class="messages" #messageContainer>
+
+      @if (messages().length === 0 && activeDocument()) {
+      <div class="starters">
+        <p class="starters-heading">Try asking...</p>
+        <div class="starter-grid">
+          @for (prompt of starterPrompts; track prompt) {
+          <button class="starter-btn" (click)="useStarterPrompt(prompt)">
+            {{ prompt }}
+          </button>
+          }
+        </div>
+      </div>
+      }
+
+      @for (msg of messages(); track msg.timestamp) {
+      <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+        <div class="bubble">{{ msg.content }}</div>
+      </div>
+      }
+
+      @if (isTyping()) {
+      <div class="message assistant">
+        <div class="bubble typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      }
+
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <div class="input-inner">
+        <mat-form-field appearance="outline" class="input-field">
+          <input matInput [(ngModel)]="question" placeholder="Ask a question about your document..."
+            (keydown)="onKeyDown($event)" [disabled]="isTyping() || !activeDocument()" />
+        </mat-form-field>
+        <button class="send-btn" (click)="sendQuestion()"
+          [disabled]="isTyping() || !question.trim() || !activeDocument()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
 import { DocumentService } from '../../core/services/document.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { IDocument } from '../../core/models/document.model';
 
 @Component({
   selector: 'app-upload',
@@ -21,6 +22,14 @@ export class Upload {
 
   isDragging = false;
   isUploading = false;
+  recentDocuments = signal<IDocument[]>([]);
+
+  ngOnInit(){
+    this.documentService.listDocuments().subscribe({
+      next: (response) => this.recentDocuments.set(response.documents),
+      error: () => {}
+    })
+  }
 
   onDragOver(event: DragEvent):void {
     event.preventDefault();
@@ -42,6 +51,10 @@ export class Upload {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if(file) this.upload(file);
+  }
+
+  goToDocument(id: string){
+    this.router.navigate(['/chat',id]);
   }
 
   private upload(file:File): void {
