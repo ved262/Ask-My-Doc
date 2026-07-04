@@ -1,0 +1,18 @@
+<div class="upload-page">
+    <div class="hero">
+        <h1>Ask My Doc</h1>
+        <p>Upload a PDF and chat with it using AI</p>
+    </div>
+    <div class="drop-zone" [class.dragover]="isDragging" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)" (click)="fileInput.click()">
+        <mat-icon>upload_file</mat-icon>
+        <p>Drag & drop a PDF here or <span class="link">browse</span></p>
+        <p class="hint">Max 10MB · Text-based PDFs only</p>
+        <input #fileInput type="file" accept=".pdf" (change)="onFileSelected($event)" hidden />
+    </div>
+
+    @if (isUploading){
+    <mat-progress-bar mode="indeterminate" />
+    <p class="status">Processing your PDF...</p>
+    }
+</div>

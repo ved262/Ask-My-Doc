@@ -16,12 +16,12 @@ export interface IDocument {
     updatedAt: Date;
 }
 
-export interface IDocumentUpload {
+export interface IDocumentUploadResponse {
     message: string;
     document: IDocument;
 }
 
-export interface IChatreposne {
+export interface IChatResponse {
     answer: string;
     question: string;
     documentId: string;
