@@ -1,12 +1,17 @@
 <mat-sidenav-container class="chat-container">
 
   <!-- ── Sidebar ── -->
-  <mat-sidenav mode="side" opened class="sidebar">
+  <mat-sidenav #sidenav mode="side" [opened]="isSidebarOpen()" class="sidebar">
     <div class="sidebar-header">
       <span class="sidebar-title">Documents</span>
-      <button mat-icon-button (click)="navigateToUpload()">
-        <mat-icon>add</mat-icon>
-      </button>
+      <div class="sidebar-actions">
+        <button mat-icon-button (click)="navigateToUpload()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-icon-button (click)="toggleSidebar()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+      </div>
     </div>
 
     <mat-nav-list>
@@ -27,6 +32,9 @@
 
     <!-- Header -->
     <div class="chat-header">
+      <button mat-icon-button class="toggle-btn" (click)="toggleSidebar()">
+        <mat-icon>{{ isSidebarOpen() ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
       <mat-icon>auto_stories</mat-icon>
       <span class="header-name">{{ activeDocument()?.originalName ?? 'Select a document' }}</span>
       @if (activeDocument()) {
@@ -36,7 +44,6 @@
 
     <!-- Messages -->
     <div class="messages" #messageContainer>
-
       @if (messages().length === 0 && activeDocument()) {
       <div class="starters">
         <p class="starters-heading">Try asking...</p>
@@ -63,7 +70,6 @@
         </div>
       </div>
       }
-
     </div>
 
     <!-- Input -->

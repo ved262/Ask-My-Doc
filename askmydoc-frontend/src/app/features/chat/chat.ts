@@ -40,6 +40,7 @@ export class Chat {
   activeDocument = signal<IDocument | null>(null);
   messages = signal<IChatMessage[]>([]);
   isTyping = signal(false);
+  isSidebarOpen = signal(false);
   question = '';
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
@@ -130,15 +131,19 @@ export class Chat {
     this.router.navigate(['/']);
   }
 
-  private scrollToBottom(): void{
-    setTimeout(()=>{
+  private scrollToBottom(): void {
+    setTimeout(() => {
       const el = this.messageContainer.nativeElement;
-      if(el) el.scrollTop = el.scrollHeight;
+      if (el) el.scrollTop = el.scrollHeight;
     }, 100);
   }
 
-  formatFileSize(bytes: number){
-    return bytes < 1024*1024 ? `${(bytes/1024).toFixed(1)} KB` : `${(bytes/1024*1024).toFixed(1)}`
+  formatFileSize(bytes: number) {
+    return bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1024 * 1024).toFixed(1)}`
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarOpen.set(!this.isSidebarOpen());
   }
 
 }
