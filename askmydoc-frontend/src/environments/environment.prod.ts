@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-render-app.onrender.com/api'  // update before deployment
+  apiUrl: 'https://ask-my-doc-c387.onrender.com/api'  // update before deployment
 };

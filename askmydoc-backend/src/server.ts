@@ -12,7 +12,7 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? 'https://askmydoc.com' : 'http://localhost:4200',
+    origin: process.env.NODE_ENV === 'production' ? 'https://ask-my-doc-c387.onrender.com' : 'http://localhost:4200',
     methods: ['GET', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type']
 }))
