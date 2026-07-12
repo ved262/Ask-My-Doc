@@ -164,14 +164,6 @@ NODE_ENV=development
 
 ---
 
-## Deployment
-
-| Service | Configuration |
-|---|---|
-| **Render** | Root: `askmydoc-backend` · Build: `npm install --include=dev && npm run build` · Start: `npm start` |
-| **Vercel** | Root: `askmydoc-frontend` · Build: `ng build --configuration production` · Output: `dist/askmydoc-frontend` |
-
----
 
 ## Limitations (v1)
 
