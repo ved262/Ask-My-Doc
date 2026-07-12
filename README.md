@@ -192,8 +192,3 @@ NODE_ENV=development
 - [ ] Deployment on AWS
 
 ---
-
-## Author
-
-**Vedant Borawake**
-- GitHub: [github.com/vedant-borawake](https://github.com/ved262)
