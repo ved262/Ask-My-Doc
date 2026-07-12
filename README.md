@@ -2,7 +2,7 @@
 
 > Upload any PDF and chat with it using AI.
 
-AskMyDoc is a full-stack AI-powered application that lets users upload PDF documents and interact with them through a conversational chat interface powered by OpenAI GPT-3.5-turbo.
+AskMyDoc is a full-stack AI-powered application that lets users upload PDF documents and interact with them through a conversational chat interface powered by OpenAI GPT-4o-mini.
 
 **Live Demo:** [ask-my-doc-azure.vercel.app](https://ask-my-doc-azure.vercel.app/)
 
