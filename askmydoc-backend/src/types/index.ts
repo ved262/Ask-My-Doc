@@ -33,3 +33,16 @@ export interface IAskQuestionResponse {
   question: string;
   documentId: string;
 }
+
+// ─── RAG ──────────────────────────────────────────────────────────────────────
+
+export interface IPageText {
+  pageNumber: number;
+  text: string;
+}
+
+export interface IChunk {
+  text: string;
+  pageNumber: number;   // which PDF page this chunk came from
+  chunkIndex: number;   // position within the whole document
+}
