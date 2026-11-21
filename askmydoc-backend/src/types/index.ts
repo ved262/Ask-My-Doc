@@ -22,6 +22,7 @@ export interface IChatMessage{
   role: MessageRole;
   content: string;
   timestamp: Date;
+  pages?: number[];
 }
 
 export interface IAskQuestionRequest {
@@ -32,6 +33,7 @@ export interface IAskQuestionResponse {
   answer: string;
   question: string;
   documentId: string;
+  pages?: number[];
 }
 
 // ─── RAG ──────────────────────────────────────────────────────────────────────

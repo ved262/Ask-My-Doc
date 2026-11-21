@@ -14,6 +14,10 @@ const ChatMessageSchema = new Schema<IChatMessage>({
     timestamp: {
         type: Date,
         default: Date.now
+    },
+    pages: {
+        type: [Number],
+        default: undefined
     }
 }, { _id: false })
 
