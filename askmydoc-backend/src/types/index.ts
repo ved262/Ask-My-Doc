@@ -46,3 +46,9 @@ export interface IChunk {
   pageNumber: number;   // which PDF page this chunk came from
   chunkIndex: number;   // position within the whole document
 }
+
+export interface ISearchResult {
+  text: string;
+  pageNumber: number;
+  score: number;   // similarity: closer to 1 = closer in meaning
+}

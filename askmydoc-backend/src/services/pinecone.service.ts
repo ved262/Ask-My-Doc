@@ -1,5 +1,5 @@
 import { Pinecone } from '@pinecone-database/pinecone';
-import { IChunk } from '../types';
+import { IChunk, ISearchResult } from '../types';
 
 const NAMESPACE = 'documents';
 const BATCH_SIZE = 100;
@@ -39,4 +39,27 @@ export const upsertChunks = async (
       documents: documents.slice(i, i + BATCH_SIZE),
     });
   }
+};
+
+export const searchChunks = async (
+  documentId: string,
+  queryVector: number[],
+  topK = 5
+): Promise<ISearchResult[]> => {
+  const results = await getNamespace().documents.search({
+    scoreBy: [{ type: 'dense_vector', fields: ['embedding'], values: queryVector }],
+    filter: { documentId: { $eq: documentId } },
+    topK,
+    includeFields: ['text', 'pageNumber'],
+  });
+
+  return results.matches.map(match => {
+    // loose typing: the SDK's result type for custom fields is generic
+    const m = match as unknown as { _score: number; text: string, pageNumber: number };
+    return {
+      text: String(m?.text ?? ''),
+      pageNumber: Number(m?.pageNumber ?? 0),
+      score: m._score,
+    };
+  });
 };
