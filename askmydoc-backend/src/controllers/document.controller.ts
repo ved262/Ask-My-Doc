@@ -1,39 +1,64 @@
 import { Request, Response, NextFunction } from 'express';
-import { ApiError } from '../types';
-import pdfParse from 'pdf-parse';
+import { Types } from 'mongoose';
 import DocumentModel from '../models/Document';
+import { extractPages } from '../services/pdf.service';
+import { chunkPages } from '../services/chunk.service';
+import { embedTexts } from '../services/embedding.service';
+import { upsertChunks } from '../services/pinecone.service';
+import { ApiError } from '../types';
 
-export const uploadDocument = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' } as ApiError)
-        }
-        const pdfData = new pdfParse.PDFParse(new Uint8Array(req.file.buffer))
-        const pdfText = (await pdfData.getText()).text
-        const pdfPageCount = (await pdfData.getInfo()).total
-        if (!pdfText || pdfText.trim().length === 0) {
-            return res.status(422).json({
-                error: 'Could not extract text from this PDF'
-            } as ApiError)
-        }
-        const document = await DocumentModel.create({
-            filename: req.file.originalname.replace(/\s+/g, '_'),
-            originalName: req.file.originalname,
-            extractedText: pdfText,
-            fileSize: req.file.size,
-            pageCount: pdfPageCount
-        })
-        const { extractedText, ...documentWithoutText } = document.toObject()
-        return res.status(201).json({ message: "Document uploaded successfully", document: documentWithoutText })
-
-    } catch (error) {
-        const isDev = process.env.NODE_ENV === 'development';
-        return res.status(500).json({
-            error: 'Failed to process PDF',
-            details: isDev ? String(error) : undefined,
-        } as ApiError);
+export const uploadDocument = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: 'No file uploaded' } as ApiError);
+      return;
     }
-}
+
+    const pages = await extractPages(req.file.buffer);
+
+    if (pages.length === 0) {
+      res.status(422).json({
+        error: 'Could not extract text from this PDF. Scanned PDFs are not supported.',
+      } as ApiError);
+      return;
+    }
+
+    // We create the ID ourselves so Pinecone and MongoDB can share it
+    const documentId = new Types.ObjectId();
+
+    // Risky steps first (network calls to OpenAI and Pinecone)
+    const chunks = await chunkPages(pages);
+    const vectors = await embedTexts(chunks.map(chunk => chunk.text));
+    await upsertChunks(documentId.toString(), chunks, vectors);
+
+    // Quick local write last
+    const document = await DocumentModel.create({
+      _id: documentId,
+      filename:  req.file.originalname.replace(/\s+/g, '_'),
+      originalName: req.file.originalname,
+      extractedText: pages.map(page => page.text).join('\n\n'),
+      fileSize: req.file.size,
+      pageCount: pages.length,
+    });
+
+    res.status(201).json({
+      message: 'PDF uploaded and processed successfully',
+      document: {
+        _id: document._id,
+        originalName: document.originalName,
+        fileSize: document.fileSize,
+        pageCount: document.pageCount,
+        createdAt: document.createdAt,
+      },
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === 'development';
+    res.status(500).json({
+      error: 'Failed to process PDF',
+      details: isDev ? String(error) : undefined,
+    } as ApiError);
+  }
+};
 
 export const listDocuments = async (req: Request, res: Response, next: NextFunction) => {
     try {
