@@ -3,12 +3,14 @@ import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { IDocumentUploadResponse, IDocument, StreamEvent } from "../models/document.model";
 import { Observable } from "rxjs/internal/Observable";
+import { AuthService } from "./auth.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class DocumentService {
     private http = inject(HttpClient);
+    private auth = inject(AuthService)
     private apiUrl = environment.apiUrl;
 
     uploadDocument(file: File): Observable<IDocumentUploadResponse> {
@@ -31,12 +33,21 @@ export class DocumentService {
 
             (async () => {
                 try {
+                    const token = this.auth.token;
                     const response = await fetch(`${this.apiUrl}/chat/${documentId}/stream`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            ...( token ? { 'Authorization': `Bearer ${token}`} : {})
+                         },
                         body: JSON.stringify({ question }),
                         signal: controller.signal,
                     });
+
+                    if(response.status === 401) {
+                        this.auth.logout();
+                        throw new Error('Session expired. Please log in again.')
+                    }
 
                     // Errors before the stream opens come back as normal JSON
                     if (!response.ok || !response.body) {

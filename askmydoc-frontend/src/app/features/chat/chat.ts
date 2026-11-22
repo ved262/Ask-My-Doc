@@ -13,6 +13,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DocumentService } from '../../core/services/document.service';
 import { IChatMessage, IDocument, MessageRole } from '../../core/models/document.model';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-chat',
@@ -35,6 +36,7 @@ export class Chat {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private documentService = inject(DocumentService);
+  private auth = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   isStreaming = signal(false);
   private streamSub?: Subscription;

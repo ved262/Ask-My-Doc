@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { IDocument } from '../../core/models/document.model';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-upload',
@@ -16,6 +17,7 @@ import { IDocument } from '../../core/models/document.model';
 })
 export class Upload {
   private documentService = inject(DocumentService);
+  private auth = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private cdr = inject(ChangeDetectorRef);

@@ -25,6 +25,13 @@
       <p class="empty-state">No documents yet</p>
       }
     </mat-nav-list>
+
+    <div class="sidebar-footer">
+      <span class="user-email">{{ auth.user()?.email }}</span>
+      <button mat-icon-button (click)="auth.logout()" aria-label="Log out">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
   </mat-sidenav>
 
   <!-- ── Chat Area ── -->
@@ -35,6 +42,9 @@
       <button mat-icon-button class="toggle-btn" (click)="toggleSidebar()">
         <mat-icon>{{ isSidebarOpen() ? 'menu_open' : 'menu' }}</mat-icon>
       </button>
+      <a mat-icon-button class="home-btn" routerLink="/" aria-label="Home" title="Home">
+        <mat-icon>home</mat-icon>
+      </a>
       <mat-icon>auto_stories</mat-icon>
       <span class="header-name">{{ activeDocument()?.originalName ?? 'Select a document' }}</span>
       @if (activeDocument()) {
