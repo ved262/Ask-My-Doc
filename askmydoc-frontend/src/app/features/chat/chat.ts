@@ -105,7 +105,8 @@ export class Chat {
         const assistantMessage: IChatMessage = {
           role: 'assistant',
           content: response.answer,
-          timestamp: new Date()
+          timestamp: new Date(),
+          pages: response.pages
         }
         this.messages.update(msgs => [...msgs, assistantMessage]);
         this.isTyping.set(false);

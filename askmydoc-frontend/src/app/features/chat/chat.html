@@ -59,7 +59,19 @@
 
       @for (msg of messages(); track msg.timestamp) {
       <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
-        <div class="bubble">{{ msg.content }}</div>
+        <div class="bubble-wrap">
+          <div class="bubble">{{ msg.content }}</div>
+
+          @if (msg.role === 'assistant' && msg.pages?.length) {
+          <div class="sources">
+            <mat-icon>description</mat-icon>
+            <span class="sources-label">Source:</span>
+            @for (page of msg.pages; track page) {
+            <span class="page-chip">p. {{ page }}</span>
+            }
+          </div>
+          }
+        </div>
       </div>
       }
 

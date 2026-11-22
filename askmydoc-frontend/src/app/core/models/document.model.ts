@@ -4,6 +4,7 @@ export interface IChatMessage {
     role: MessageRole;
     content: string;
     timestamp: Date;
+    pages?: number[]; 
 }
 
 export interface IDocument {
@@ -25,4 +26,5 @@ export interface IChatResponse {
     answer: string;
     question: string;
     documentId: string;
+    pages?: number[]; 
 }
