@@ -27,13 +27,6 @@ export interface IAskQuestionRequest {
   question: string;
 }
 
-export interface IAskQuestionResponse {
-  answer: string;
-  question: string;
-  documentId: string;
-  pages?: number[];
-}
-
 // ─── RAG ──────────────────────────────────────────────────────────────────────
 
 export interface IPageText {

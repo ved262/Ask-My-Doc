@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
-import { IDocumentUploadResponse, IDocument, IChatResponse, StreamEvent } from "../models/document.model";
+import { IDocumentUploadResponse, IDocument, StreamEvent } from "../models/document.model";
 import { Observable } from "rxjs/internal/Observable";
 
 @Injectable({
@@ -23,10 +23,6 @@ export class DocumentService {
 
     getDocument(id: string): Observable<{ message: string, document: IDocument }> {
         return this.http.get<{ message: string, document: IDocument }>(`${this.apiUrl}/documents/${id}`);
-    }
-
-    askQuestion(documentId: string, question: string): Observable<IChatResponse> {
-        return this.http.post<IChatResponse>(`${this.apiUrl}/chat/${documentId}`, { question });
     }
 
     askQuestionStream(documentId: string, question: string): Observable<StreamEvent> {

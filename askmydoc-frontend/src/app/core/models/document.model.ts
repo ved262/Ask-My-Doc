@@ -22,13 +22,6 @@ export interface IDocumentUploadResponse {
     document: IDocument;
 }
 
-export interface IChatResponse {
-    answer: string;
-    question: string;
-    documentId: string;
-    pages?: number[]; 
-}
-
 export type StreamEvent =
   | { type: 'token'; token: string }
   | { type: 'done'; pages: number[] }
