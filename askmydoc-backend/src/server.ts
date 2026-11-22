@@ -5,6 +5,7 @@ import cors from 'cors'
 
 dotenv.config()
 
+import authRoutes from './routes/auth.route'
 import documentRoutes from './routes/documents.route'
 import chatRoutes from './routes/chat.route'
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 app.use('/api/documents', documentRoutes)
 app.use('/api/chat', chatRoutes)
+app.use('/api/auth', authRoutes)
 
 app.get('/api/health', (req, res)=>{
     res.json({

@@ -50,3 +50,17 @@ export interface IExtractedPdf {
   pages: IPageText[];
   totalPages: number;
 }
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+export interface IUser extends MongooseDocument {
+  email: string;
+  passwordHash: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AuthRequestBody {
+  email: string;
+  password: string;
+}
