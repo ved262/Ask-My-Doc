@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DocumentService } from '../../core/services/document.service';
 import { IChatMessage, IDocument, MessageRole } from '../../core/models/document.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -35,6 +36,8 @@ export class Chat {
   private router = inject(Router);
   private documentService = inject(DocumentService);
   private snackBar = inject(MatSnackBar);
+  isStreaming = signal(false);
+  private streamSub?: Subscription;
 
   documents = signal<IDocument[]>([]);
   activeDocument = signal<IDocument | null>(null);
@@ -55,7 +58,10 @@ export class Chat {
   ngOnInit() {
     this.loadDocuments();
     this.route.params.subscribe(params => {
-      if (params['id']) this.loadDocument(params['id']);
+      if (params['id']) {
+        this.cancelStream();
+        this.loadDocument(params['id']);
+      }
     })
   }
 
@@ -90,35 +96,81 @@ export class Chat {
     const q = this.question.trim();
     const doc = this.activeDocument();
     if (!q || !doc || this.isTyping()) return;
-    const userMessage = {
-      role: 'user' as MessageRole,
-      content: q,
-      timestamp: new Date()
-    }
-    this.messages.update(msgs => [...msgs, userMessage])
+
+    const startLength = this.messages().length;
+    this.messages.update(msgs => [
+      ...msgs,
+      { role: 'user', content: q, timestamp: new Date() },
+    ]);
     this.question = '';
     this.isTyping.set(true);
     this.scrollToBottom();
 
-    this.documentService.askQuestion(doc._id, q).subscribe({
-      next: (response) => {
-        const assistantMessage: IChatMessage = {
-          role: 'assistant',
-          content: response.answer,
-          timestamp: new Date(),
-          pages: response.pages
-        }
-        this.messages.update(msgs => [...msgs, assistantMessage]);
-        this.isTyping.set(false);
-        this.scrollToBottom();
+    this.streamSub = this.documentService.askQuestionStream(doc._id, q).subscribe({
+      next: (event) => {
+        if (event.type === 'token') this.appendToken(event.token);
+        else if (event.type === 'done') this.finishStream(event.pages);
+        else this.failStream(event.error, startLength, q);
       },
-      error: (error) => {
-        this.isTyping.set(false);
-        const message = error.error?.error || 'Failed to get answer. Please try again.';
-        this.snackBar.open(message, "Dismiss", { duration: 3000 });
-        this.messages.update(msgs => msgs.slice(0, -1));
-      }
+      error: (err) => this.failStream(err.message, startLength, q),
     })
+  }
+
+  private appendToken(token: string): void {
+    if (!this.isStreaming()) {
+      // First token: dots disappear, the assistant bubble appears
+      this.isStreaming.set(true);
+      this.messages.update(msgs => [
+        ...msgs,
+        { role: 'assistant', content: token, timestamp: new Date() },
+      ]);
+    } else {
+      this.messages.update(msgs => {
+        const last = msgs[msgs.length - 1];
+        return [...msgs.slice(0, -1), { ...last, content: last.content + token }];
+      });
+    }
+    this.scrollToBottomNow();
+  }
+
+  private finishStream(pages: number[]): void {
+    if (this.isStreaming()) {
+      this.messages.update(msgs => {
+        const last = msgs[msgs.length - 1];
+        return [...msgs.slice(0, -1), { ...last, pages }];   // page chips appear
+      });
+    }
+    this.resetStreamState();
+  }
+
+  private failStream(message: string, startLength: number, question: string): void {
+    // Remove the question and any half-written answer, and give the text back
+    this.messages.update(msgs => msgs.slice(0, startLength));
+    this.question = question;
+    this.resetStreamState();
+    this.snackBar.open(message || 'Failed to get answer. Please try again.', 'Dismiss', { duration: 4000 });
+  }
+
+  private cancelStream(): void {
+    this.streamSub?.unsubscribe();
+    this.resetStreamState();
+  }
+
+  private resetStreamState(): void {
+    this.isTyping.set(false);
+    this.isStreaming.set(false);
+    this.streamSub = undefined;
+  }
+
+  private scrollToBottomNow(): void {
+    requestAnimationFrame(() => {
+      const el = this.messageContainer?.nativeElement;
+      if (el) el.scrollTop = el.scrollHeight;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.cancelStream();
   }
 
   onKeyDown(event: KeyboardEvent): void {

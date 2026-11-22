@@ -28,3 +28,8 @@ export interface IChatResponse {
     documentId: string;
     pages?: number[]; 
 }
+
+export type StreamEvent =
+  | { type: 'token'; token: string }
+  | { type: 'done'; pages: number[] }
+  | { type: 'error'; error: string };

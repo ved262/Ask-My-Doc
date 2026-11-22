@@ -75,7 +75,7 @@
       </div>
       }
 
-      @if (isTyping()) {
+      @if (isTyping() && !isStreaming()) {
       <div class="message assistant">
         <div class="bubble typing">
           <span></span><span></span><span></span>
