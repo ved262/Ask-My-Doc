@@ -1,8 +1,10 @@
 import { Router, Request, Response } from "express"
 import multer from "multer"
 import { getDocumentById, listDocuments, uploadDocument } from "../controllers/document.controller";
+import { requireAuth } from "../middlewares/auth.middleware";
 
 const router = Router()
+router.use(requireAuth);
 const storage = multer.memoryStorage();
 
 const upload = multer({

@@ -34,6 +34,7 @@ export const uploadDocument = async (req: Request, res: Response): Promise<void>
     // Quick local write last
     const document = await DocumentModel.create({
       _id: documentId,
+      userId: req.userId,
       originalName: req.file.originalname,
       fileSize: req.file.size,
       pageCount: pages.length,
@@ -60,7 +61,7 @@ export const uploadDocument = async (req: Request, res: Response): Promise<void>
 
 export const listDocuments = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const documents = await DocumentModel.find().select('-extractedText').sort({ 'createdAt': -1 })
+        const documents = await DocumentModel.find({ userId: req.userId }).select('-extractedText').sort({ 'createdAt': -1 })
         return res.status(200).json({ message: "Documents retrieved successfully", documents })
     } catch (error) {
         const isDev = process.env.NODE_ENV === 'development';
@@ -73,7 +74,7 @@ export const listDocuments = async (req: Request, res: Response, next: NextFunct
 
 export const getDocumentById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const document = await DocumentModel.findById(req.params.id).select("-extractedText")
+        const document = await DocumentModel.findOne({ _id: req.params.id, userId: req.userId }).select("-extractedText")
         if (!document) {
             return res.status(404).json({ error: " Document not found" } as ApiError)
         }

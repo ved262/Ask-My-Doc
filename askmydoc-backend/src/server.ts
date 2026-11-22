@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' ? 'https://ask-my-doc-azure.vercel.app' : 'http://localhost:4200',
     methods: ['GET', 'POST', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 app.use(express.json({ limit: '10mb'}))

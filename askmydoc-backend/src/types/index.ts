@@ -1,6 +1,7 @@
-import { Document as MongooseDocument } from 'mongoose';
+import { Document as MongooseDocument, Types } from 'mongoose';
 
 export interface IDocument extends MongooseDocument {
+    userId: Types.ObjectId;
     originalName: string;
     fileSize: number;
     pageCount: number;
