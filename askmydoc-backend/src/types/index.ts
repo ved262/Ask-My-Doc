@@ -1,9 +1,7 @@
 import { Document as MongooseDocument } from 'mongoose';
 
 export interface IDocument extends MongooseDocument {
-    filename: string;
     originalName: string;
-    extractedText: string;
     fileSize: number;
     pageCount: number;
     createdAt: Date;
@@ -53,4 +51,9 @@ export interface ISearchResult {
   text: string;
   pageNumber: number;
   score: number;   // similarity: closer to 1 = closer in meaning
+}
+
+export interface IExtractedPdf {
+  pages: IPageText[];
+  totalPages: number;
 }

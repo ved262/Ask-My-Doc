@@ -23,15 +23,7 @@ const ChatMessageSchema = new Schema<IChatMessage>({
 
 const DocumentSchema = new Schema<IDocument>(
     {
-        filename: {
-            type: String,
-            required: true
-        },
         originalName: {
-            type: String,
-            required: true
-        },
-        extractedText: {
             type: String,
             required: true
         },

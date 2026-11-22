@@ -14,7 +14,7 @@ export const uploadDocument = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const pages = await extractPages(req.file.buffer);
+    const { pages, totalPages } = await extractPages(req.file.buffer);
 
     if (pages.length === 0) {
       res.status(422).json({
@@ -34,9 +34,7 @@ export const uploadDocument = async (req: Request, res: Response): Promise<void>
     // Quick local write last
     const document = await DocumentModel.create({
       _id: documentId,
-      filename:  req.file.originalname.replace(/\s+/g, '_'),
       originalName: req.file.originalname,
-      extractedText: pages.map(page => page.text).join('\n\n'),
       fileSize: req.file.size,
       pageCount: pages.length,
     });
